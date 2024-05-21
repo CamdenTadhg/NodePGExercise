@@ -19,9 +19,11 @@ router.get('/:id', async function(req, res, next){
         if (results.rows.length === 0){
             throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
         }
-        console.log(results);
-        //I need to know what this results looks like to figure out how to display the company information.
-        return res.json({invoice: results.rows[0]});
+        const {result_id, amt, paid, add_date, paid_date, code, name, description} = results.rows[0];
+        return res.json({invoice: {
+            result_id, amt, paid, add_date, paid_date, 
+            company: {code, name, description}} 
+             });
     } catch(e) {
         return next(e);
     }
@@ -63,7 +65,7 @@ router.put('/:id', async function(req, res, next){
 router.delete('/:id', async function(req, res, next){
     try {
         const {id} = req.params;
-        const results = await db.query('DELETE FROM invoices WHERE id = $1', [id]);
+        const results = await db.query('DELETE FROM invoices WHERE id = $1 RETURNING id', [id]);
         if (results.rows.length === 0){
             throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
         }

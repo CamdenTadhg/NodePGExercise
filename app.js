@@ -34,10 +34,4 @@ app.use((err, req, res, next) => {
 
 module.exports = app;
 
-
-// create GET /invoices route
-//create GET /invoices/[id] route
-// create POST /invoices route
-// create PUT /invoices/[id] route
-// create DELETE /invoices/[id] route
 // revise GET /companies/[code] route
