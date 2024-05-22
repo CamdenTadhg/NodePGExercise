@@ -14,14 +14,13 @@ router.get('/', async function(req, res, next){
 
 router.get('/:id', async function(req, res, next){
     try{
-        const {id} = req.params;
-        const results = await db.query(`SELECT * FROM invoices INNER JOIN companies ON companies.code = invoices.comp_code WHERE id = $1`, [id]);
+        const results = await db.query(`SELECT * FROM invoices INNER JOIN companies ON companies.code = invoices.comp_code WHERE id = $1`, [req.params.id]);
         if (results.rows.length === 0){
-            throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
+            throw new ExpressError(`Can't find invoice with id of ${req.params.id}`, 404);
         }
-        const {result_id, amt, paid, add_date, paid_date, code, name, description} = results.rows[0];
+        const {id, amt, paid, add_date, paid_date, code, name, description} = results.rows[0];
         return res.json({invoice: {
-            result_id, amt, paid, add_date, paid_date, 
+            id, amt, paid, add_date, paid_date, 
             company: {code, name, description}} 
              });
     } catch(e) {
@@ -39,7 +38,7 @@ router.post('/', async function(req, res, next){
             throw new ExpressError('Amount value is required', 500);
         }
         const results = await db.query('INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING id, comp_code, amt, paid, add_date, paid_date', [comp_code, amt]);
-        return res.json({invoice: results.rows[0]});
+        return res.status(201).json({invoice: results.rows[0]});
     } catch(e) {
         return next(e);
     }

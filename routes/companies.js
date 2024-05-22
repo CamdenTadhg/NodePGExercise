@@ -5,7 +5,7 @@ const router = new express.Router();
 
 router.get('/', async function(req, res, next){
     try{
-        const results = await db.query('SELECT * FROM companies');
+        const results = await db.query('SELECT code, name FROM companies');
         return res.json({companies: results.rows});
     } catch(e){
         return next(e);
@@ -14,14 +14,13 @@ router.get('/', async function(req, res, next){
 
 router.get('/:code', async function(req, res, next){
     try{
-        const {code} = req.params;
-        const results = await db.query('SELECT * FROM companies INNER JOIN invoices ON companies.code = invoices.comp_code WHERE code = $1', [code]);
+        const results = await db.query('SELECT * FROM companies INNER JOIN invoices ON companies.code = invoices.comp_code WHERE code = $1', [req.params.code]);
         if (results.rows.length === 0){
-            throw new ExpressError(`Can't find company with code of ${code}`, 404);
+            throw new ExpressError(`Can't find company with code of ${req.params.code}`, 404);
         }
-        const {results_code, name, description} = results.rows[0];
+        const {code, name, description} = results.rows[0];
         const invoices = results.rows.map((invoice) => invoice.id);
-        return res.json({company: {results_code, name, description, invoices: invoices}});
+        return res.json({company: {code, name, description, invoices: invoices}});
     } catch(e){
         return next(e);
     }

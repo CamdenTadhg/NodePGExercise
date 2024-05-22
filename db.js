@@ -4,7 +4,7 @@ const {Client} = require('pg');
 
 function getDatabaseUri(){
     return (process.env.NODE_ENV === "test")
-        ? "biztime_test"
+        ? "postgres://camdentadhg:password@127.0.0.1:5432/biztime_test"
         : process.env.DATABASE_URL || "postgres://camdentadhg:password@127.0.0.1:5432/biztime"
 }
 
