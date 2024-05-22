@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("../db");
 const ExpressError = require("../expressError");
 const router = new express.Router();
+const slugify = require('slugify');
 
 router.get('/', async function(req, res, next){
     try{
@@ -28,13 +29,11 @@ router.get('/:code', async function(req, res, next){
 
 router.post('/', async function(req, res, next){
     try {
-        const {code, name, description} = req.body;
-        if (code.length === 0){
-            throw new ExpressError(`Code value is required`, 500);
-        }
+        const {name, description} = req.body;
         if (name.length === 0){
             throw new ExpressError('Name value is required', 500);
         }
+        const code = slugify(name, {replacement: '', remove: /[*+~.()'"!:@]/g, lower: true, strict: true});
         const results = await db.query('INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description', [code, name, description]);
         return res.status(201).json({company: results.rows[0]});
     } catch(e){
