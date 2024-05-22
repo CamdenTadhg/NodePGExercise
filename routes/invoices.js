@@ -46,12 +46,23 @@ router.post('/', async function(req, res, next){
 
 router.put('/:id', async function(req, res, next){
     try{
-        const {amt} = req.body;
-        const {id} = req.params;
+        const {amt, paid} = req.body;
         if (amt.length === 0){
             throw new ExpressError('Amount values is required', 500);
         }
-        const results = await db.query('UPDATE invoices SET amt = $1 WHERE id = $2 RETURNING id, comp_code, amt, paid, add_date, paid_date', [amt, id]);
+        const {id} = req.params;
+        let paid_date;
+        const invoice = await db.query('SELECT paid_date FROM invoices WHERE id = $1', [id]);
+        if (paid === true && invoice.rows[0].paid_date === null){
+            paid_date = new Date();
+        }
+        else if (paid === false){
+            paid_date = null;
+        }
+        else if (paid === true && invoice.rows[0].paid_date !== null){
+            paid_date = invoice.rows[0].paid_date;
+        }
+        const results = await db.query('UPDATE invoices SET amt = $1, paid = $4, paid_date = $3 WHERE id = $2 RETURNING id, comp_code, amt, paid, add_date, paid_date', [amt, id, paid_date, paid]);
         if (results.rows.length === 0){
             throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
         }

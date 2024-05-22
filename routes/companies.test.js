@@ -42,9 +42,9 @@ describe("GET /companies/[code]", function(){
 
 describe("POST /companies", function(){
     test("Creates a new company", async function(){
-        const response = await request(app).post('/companies').send({code: "app", name: "Apple", description: "Think Different"});
+        const response = await request(app).post('/companies').send({name: "Apple", description: "Think Different"});
         expect(response.statusCode).toEqual(201);
-        expect(response.body).toEqual({company: {"code": "app", "name": "Apple", "description": "Think Different"}})
+        expect(response.body).toEqual({company: {"code": "apple", "name": "Apple", "description": "Think Different"}})
     });
 })
 

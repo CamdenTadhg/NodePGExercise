@@ -34,8 +34,6 @@ app.use((err, req, res, next) => {
 
 module.exports = app;
 
-//slugify company names
-//allow paying of invoices
 //write test for paying of invoices
 //add industries many-to-many feature
 //write tests for industries feature
