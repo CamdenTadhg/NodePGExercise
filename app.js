@@ -10,8 +10,12 @@ app.use(express.json());
 /** Companies routes */
 const cRoutes = require('./routes/companies');
 app.use('/companies', cRoutes);
+/** Invoices routes */
 const iRoutes = require('./routes/invoices');
 app.use('/invoices', iRoutes);
+/** Industries routes */
+// const indRoutes = require('./routes/industries');
+// app.use('/industries', indRoutes);
 
 /** 404 handler */
 
@@ -34,6 +38,8 @@ app.use((err, req, res, next) => {
 
 module.exports = app;
 
-//write test for paying of invoices
 //add industries many-to-many feature
+  // add route for adding an industry
+  // add route for listing all industries (show company codes for that industry)
+  // add route for associating an industry to a company
 //write tests for industries feature

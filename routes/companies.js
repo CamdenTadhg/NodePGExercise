@@ -15,13 +15,22 @@ router.get('/', async function(req, res, next){
 
 router.get('/:code', async function(req, res, next){
     try{
-        const results = await db.query('SELECT * FROM companies INNER JOIN invoices ON companies.code = invoices.comp_code WHERE code = $1', [req.params.code]);
-        if (results.rows.length === 0){
+        const invResults = await db.query(
+            `SELECT c.code, c.name, c.description, i.id FROM companies AS c
+            LEFT JOIN invoices AS i ON c.code = i.comp_code
+            WHERE c.code = $1`, [req.params.code]);
+        if (invResults.rows.length === 0){
             throw new ExpressError(`Can't find company with code of ${req.params.code}`, 404);
         }
-        const {code, name, description} = results.rows[0];
-        const invoices = results.rows.map((invoice) => invoice.id);
-        return res.json({company: {code, name, description, invoices: invoices}});
+        const indResults = await db.query(
+            `SELECT c.code, c.name, c.description, ind.industry FROM companies AS c
+            LEFT JOIN companies_industries AS ci ON c.code = ci.comp_code
+            INNER JOIN industries AS ind ON ind.code = ci.ind_code
+            WHERE c.code = $1`, [req.params.code]);
+        const {code, name, description} = invResults.rows[0];
+        const invoices = invResults.rows.map((invoice) => invoice.id);
+        const industries = indResults.rows.map((industry) => industry.industry)
+        return res.json({company: {code, name, description, invoices: invoices, industries: industries}});
     } catch(e){
         return next(e);
     }
