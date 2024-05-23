@@ -3,7 +3,7 @@ process.env.NODE_ENV = "test";
 const request = require('supertest');
 const app = require('../app');
 const db = require('../db');
-const today = '2024-05-21'
+const today = '2024-05-23'
 
 beforeEach(async function(){
     const result = await db.query(`INSERT INTO companies (code, name, description) VALUES ('hp', 'HP', 'hardware manufacturer')`);
@@ -64,7 +64,7 @@ describe("PUT /invoices/[id]", function(){
         const id = idResult.rows[0].id;
         const response = await request(app).put(`/invoices/${id}`).send({"amt": 250, "paid": true});
         expect(response.statusCode).toEqual(200);
-        expect(response.body).toEqual({"invoice": {"id": id, "comp_code": "hp", "amt": 250, "paid": true, "add_date": expect.stringContaining(today), "paid_date": expect.stringContaining('2024-05-21')}})
+        expect(response.body).toEqual({"invoice": {"id": id, "comp_code": "hp", "amt": 250, "paid": true, "add_date": expect.stringContaining(today), "paid_date": expect.stringContaining(today)}})
     });
     test("Updates an invoice to unpaid", async function(){
         const idResult = await db.query('SELECT id FROM invoices WHERE amt = 500');

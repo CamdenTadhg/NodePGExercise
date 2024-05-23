@@ -14,8 +14,8 @@ app.use('/companies', cRoutes);
 const iRoutes = require('./routes/invoices');
 app.use('/invoices', iRoutes);
 /** Industries routes */
-// const indRoutes = require('./routes/industries');
-// app.use('/industries', indRoutes);
+const indRoutes = require('./routes/industries');
+app.use('/industries', indRoutes);
 
 /** 404 handler */
 
@@ -37,9 +37,3 @@ app.use((err, req, res, next) => {
 
 
 module.exports = app;
-
-//add industries many-to-many feature
-  // add route for adding an industry
-  // add route for listing all industries (show company codes for that industry)
-  // add route for associating an industry to a company
-//write tests for industries feature
